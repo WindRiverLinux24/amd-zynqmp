@@ -460,8 +460,8 @@ from linux side in running time. A simple example as below:
 ---------------------------------
 
 Download a xilinx prebuilt bitstream file with below link:
-https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2520219649/2022.2+Release
-Then, extract the .bit file from package 2022.2_zcu102_release.tar.xz and rename it into system.bit
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2736816129/2023.2+Release
+Then, extract the .bit file from package 2023.2-zcu102-release.tar.xz and rename it into system.bit
 
 8.2 Generate binary file
 --------------------------
@@ -469,7 +469,7 @@ Then, extract the .bit file from package 2022.2_zcu102_release.tar.xz and rename
 Because xilinx-zynqmp platform only supports binary format for updating FPGA, it is need
 to change the .bit file into binary format with below commands:
  - set environment variable
- # source xxx/Vivado/Vivado/2022.2/settings64.sh
+ # source xxx/Vivado/Vivado/2023.2/settings64.sh
 
  - generate the .bin from .bit file using Bootgen
  # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
@@ -682,7 +682,7 @@ Prerequisites:
   * RSA key pair related knowledges, like using openssl to make RSA key pair.
   * Please carefully read chapter 8, 11, 12 in [3], chapter 8 and 16 in [4],
     chapter 5 in [9] and all content of [5] in References section.
-  * Download and install Xilinx SDK 2022.2 or later version via link [7].
+  * Download and install Xilinx SDK 2023.2 or later version via link [7].
 
 After having downloaded and installed Xilinx SDK, then you can start to make
 RSA key pair and assemble your own zynqmp BOOT.BIN by bootgen command.
@@ -736,65 +736,44 @@ Warning:
 Below example describes how to generate BOOT.BIN and the black key is stored
 in boot header.
 
-10.5.2.1 Generate First Stage Boot Loader
-To create First Stage Boot Loader, please refer to section
-[Create First Stage Boot Loader for ARM Cortex A53-Based APU] in [9]
+10.5.2.1 Prepare keys
+---------------------
 
-10.5.2.2 Generate PMU firmware
-To create PMU firmware, please refer to section
-[Create PMU Firmware for Platform Management Unit] in [9]
-
-10.5.2.3 Get FPGA bit stream file
-Download 2022.2_zcu102_release.tar.xz from below link:
-https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2520219649/2022.2+Release
-And then get the system.bit file from the release package.
-
-10.5.2.4 Build the arm trust firmware
-Detail steps as below:
-	$ git clone https://github.com/Xilinx/arm-trusted-firmware.git
-	$ cd arm-trusted-firmware
-	$ git checkout xlnx_rebase_v2.6
-	$ export CROSS_COMPILE=<path_to_toolchain>/aarch64-linux-gnu-
-	$ export ARCH=aarch64
-	$ make realclean
-	$ make PLAT=zynqmp clean
-	$ make PLAT=zynqmp RESET_TO_BL31=1
-
-	At last, get the bl31.elf file
-
-User also can copy the pre-build bl31.elf file from 2022.2_zcu102_release.tar.xz.
-
-10.5.2.5 Generate black key related files for boot header mode
-To create black key related files, please refer to section
-[PUF Registration - Boot Header Mode] in [9]
-
-10.5.2.6 Generate u-boot.elf
-When build BSP xilinx-zynqmp, u-boot will be built and the u-boot.elf is in
-<path_bsp_project>/build/tmp-glibc/deploy/images/xilinx-zynqmp/
-How to build BSP xilinx-zynqmp with secure-boot template, please refer to section 11.8.
-
-10.5.2.7 Generate BOOT.BIN
 So far, there are all the related files as below to generate BOOT.bin.
-	aes.nky		//AES key to encrypt each partition in BOOT.BIN
+	aes*.nky		//AES key to encrypt each partition in BOOT.BIN
 	psk0.pem	//The primary secret key, it is from BSP layer xilinx-zynqmp/zynqmp_keys/hd-root-trusted-rsa4096
 	ssk0.pem	//The secondary secret key, it is from BSP layer xilinx-zynqmp/zynqmp_keys/hd-root-trusted-rsa4096
 	helperdata.txt	//PUF(physically unclonable function) Syndrome data
 	black_key.txt	//The black key that is a encrypted key
 	black_iv.txt	//The black key initialization vector
-	fsbl_a53.elf	//The First Stage Boot Loader
-	pmufw.elf	//The PMU firmware
-	system.bit	//The FPGA bit stream
-	bl31.elf	//The arm trust firmware
-	u-boot.elf	//The u-boot with the public key of RSA-2048/RSA-4096 key.
 
-Put the above files into the same directory, and run below command to create BOOT.BIN.
+Please place these keys in the path <your_keys_path>. Then copy the sample
+bif file zynqmp_keys/bifs/generate_secure_boot_bh.bif to <your_keys_path>.
+And substitute the string "<path_to_place_keys>" in the bif file with <your_keys_path>.
+Please do NOT modify paths for the following components in the bif file:
+	pmufw.elf
+	fsbl.elf
+	download-xilinx-zynqmp.bit
+	arm-trusted-firmware.elf
+	system-top.dtb
+	u-boot.elf
 
-	$ bootgen -image generate_secure_boot_bh.bif -arch zynqmp -w -o BOOT.BIN
+10.5.2.2 Build BOOT.BIN with secure boot
+----------------------------------------
 
-Note: Please ensure the necessary environment is set in current terminal windows.
-      For example, if Vivado 2022.2 is downloaded and installed, user can set
-      environment variable with below command:
-	$ source <Vivado-path>/tools/Xilinx/Vivado/2022.2/settings64.sh
+If the BOOT.BIN with secure boot feature is required, first run the steps described
+in the chapter "5.2 Build a bootable WIC image" to modify conf/local.conf, then run
+the following commands to add specific variables to configure and build BOOT.BIN:
+
+      $ cat << _EOF >> conf/local.conf
+BIF_FILE_NAME = "generate_secure_boot_bh.bif"
+BIF_FILE_DIR = "<your_keys_path>"
+NKY_FILE_PATH = "<your_keys_path>"
+_EOF
+	  $bitbake xilinx-bootbin
+
+The BOOT.BIN file is created in the deploy dir as follows:
+	tmp-glibc/deploy/images/xilinx-zynqmp/boot.bin
 
 10.6. Programming BBRAM and eFUSE
 ---------------------------------
@@ -867,7 +846,7 @@ The fitImage is booted with command "bootm".
 There is an example as below, download kernel from tftp server and mount NFS file system.
 
 	# setenv bootargs console=ttyPS0,115200n8 root=/dev/nfs rw rootwait earlycon=cdns,0xFF000000 nfsroot=$serverip:<path_to_nfs> ip=dhcp clk_ignore_unused
-	# setenv bootcmd 'tftpboot 0x10000000 $serverip:<path_to_kernel>/fitImage; bootm 0x10000000'
+	# setenv bootcmd 'tftpboot 0x18000000 $serverip:<path_to_kernel>/fitImage; bootm 0x18000000'
 	# setenv ipaddr <board-ip>
 	# setenv netmask <board-netmask>
 	# setenv gatewayip <board-gatewayip>
@@ -877,7 +856,7 @@ There is an example as below, download kernel from tftp server and mount NFS fil
 There is another example based on wic image, load kernel from sd boot partition and mount file system from /dev/mmcblk0p2.
 
 	# setenv bootfile fitImage
-	# setenv loadaddr 0x10000000
+	# setenv loadaddr 0x18000000
 	# setenv bootargs console=ttyPS0,115200n8 root=/dev/mmcblk0p2 rw earlycon=cdns,0xFF000000 ip=dhcp clk_ignore_unused
 	# setenv bootcmd 'fatload mmc 0:1 $loadaddr $bootfile; bootm $loadaddr'
 	# run bootcmd

@@ -1,12 +1,11 @@
 //arch = zynqmp; split = false; format = BIN
 the_ROM_image:
 {
-	[aeskeyfile] ./aes.nky
 	[keysrc_encryption] bbram_red_key
-	[fsbl_config] a53_x64
-	[bootloader, encryption = aes] ./fsbl_a53.elf
-	[pmufw_image] ./pmufw.elf 
-	[encryption = aes, destination_device = pl] ./system.bit
-	[encryption = aes, destination_cpu = a53-0, exception_level = el-3, trustzone] ./bl31.elf
-	[encryption = aes, destination_cpu = a53-0, exception_level = el-2] ./u-boot.elf
+	[bootloader, encryption = aes, aeskeyfile=aes0.nky] ./recipe-sysroot/boot/fsbl.elf
+	[destination_cpu=pmu] ./recipe-sysroot/boot/pmufw.elf
+	[encryption = aes, aeskeyfile=aes1.nky, destination_device = pl] ../../../../deploy/images/xilinx-zynqmp/download-xilinx-zynqmp.bit
+	[encryption = aes, aeskeyfile=aes2.nky, destination_cpu = a53-0, exception_level = el-3, trustzone] ./recipe-sysroot/boot/arm-trusted-firmware.elf
+	[encryption = aes, aeskeyfile=aes3.nky, destination_cpu = a53-0, load = 0x100000] ./recipe-sysroot/boot/devicetree/system-top.dtb
+	[encryption = aes, aeskeyfile=aes4.nky, destination_cpu = a53-0, exception_level = el-2] ./recipe-sysroot/boot/u-boot.elf
 }
