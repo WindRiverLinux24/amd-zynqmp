@@ -772,6 +772,9 @@ NKY_FILE_PATH = "<your_keys_path>"
 _EOF
 	  $bitbake xilinx-bootbin
 
+NOTE: Add the following line to conf/local.conf to enable the detailed decryption output:
+	XSCTH_BUILD_DEBUG = "1"
+
 The BOOT.BIN file is created in the deploy dir as follows:
 	tmp-glibc/deploy/images/xilinx-zynqmp/boot.bin
 
