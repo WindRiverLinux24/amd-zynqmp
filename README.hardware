@@ -1,4 +1,4 @@
-		Xilinx ZynqMP Board Support Package
+		AMD ZynqMP Board Support Package
 
 
 Table of Contents
@@ -15,7 +15,7 @@ Table of Contents
 
 This BSP supports the following boards:
 
-  + Xilinx ZYNQMP ZCU102 REV 1.0/1.1
+  + AMD ZYNQMP ZCU102 REV 1.0/1.1
 
 
 2. Change History

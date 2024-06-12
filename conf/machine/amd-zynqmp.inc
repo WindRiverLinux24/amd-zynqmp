@@ -4,11 +4,11 @@
 DEFAULTTUNE = "cortexa53"
 require conf/machine/include/arm/armv8a/tune-cortexa53.inc
 
-BSP_XILINX_DERIVED:append = " xilinx-zynqmp"
+BSP_XILINX_DERIVED:append = " amd-zynqmp"
 MACHINE_FEATURES += "ext3 pci usbgadget usbhost vfat keyboard network"
 
 KERNEL_IMAGETYPE = "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image', d)}"
-KERNEL_DEVICETREE:xilinx-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-rev1.0-canfd.dtb"
+KERNEL_DEVICETREE:amd-zynqmp = "xilinx/zynqmp-zcu102-rev1.0.dtb xilinx/zynqmp-zcu102-rev1.0-canfd.dtb"
 
 SERIAL_CONSOLE = "115200 ttyPS0"
 
@@ -35,7 +35,7 @@ DEFAULTTUNE:virtclass-multilib-lib32 ?= "armv7athf-neon"
 
 # secure boot related configurations
 UBOOT_SIGN_ENABLE = "${@bb.utils.contains("MACHINE_FEATURES", "secure-boot", "1", "", d)}"
-UBOOT_SIGN_KEYDIR = "${@bb.utils.contains("FIT_SIGN_ALG", "rsa4096", "${LAYER_PATH_wr-xilinx-zynqmp}/zynqmp_keys/fitImage-rsa4096-keys", "${LAYER_PATH_wr-xilinx-zynqmp}/zynqmp_keys/fitImage-rsa2048-keys", d)}"
+UBOOT_SIGN_KEYDIR = "${@bb.utils.contains("FIT_SIGN_ALG", "rsa4096", "${LAYER_PATH_wr-amd-zynqmp}/zynqmp_keys/fitImage-rsa4096-keys", "${LAYER_PATH_wr-amd-zynqmp}/zynqmp_keys/fitImage-rsa2048-keys", d)}"
 UBOOT_MKIMAGE_DTCOPTS = "-I dts -O dtb -p 2000"
 UBOOT_SIGN_KEYNAME = "dev"
 # Key used to sign kernel and dtb parts in fit image
@@ -69,7 +69,7 @@ WARNING: The insecure sample keys are used for secure Boot.\
 Please ensure that you are aware of what your risk to use these keys in your own product."
 
 # Warn the user if sample key is used
-BANNER[xilinx-zynqmp_default] = "${INSECURE_KEY_MSG}"
+BANNER[amd-zynqmp_default] = "${INSECURE_KEY_MSG}"
 
 XSERVER:append = " xf86-video-armsoc"
 OSTREE_BOOTLOADER_INCLUDE ?= ""
@@ -87,7 +87,7 @@ OSTREE_NETINST_ARGS ?= "${OSTREE_CONSOLE} bl=ufsd rdinit=/install instdev=${OSTR
 OSTREE_COPY_IMAGE_BOOT_FILES = "1"
 INITRAMFS_IMAGE ??= ""
 IMAGE_BOOT_FILES:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', 'boot.scr', '', d)} ${@bb.utils.contains('DISTRO_FEATURES', 'ostree', '${INITRAMFS_IMAGE}-${MACHINE}.${INITRAMFS_FSTYPES};initramfs', '', d)}"
-MACHINEOVERRIDES:prepend:xilinx-zynqmp = "mali400:zynqmp:zynqmp-eg:"
+MACHINEOVERRIDES:prepend:amd-zynqmp = "mali400:zynqmp:zynqmp-eg:"
 
 OSTREE_BOOTSCR_PRECMD ?= "\
 setenv no_menu yes; \

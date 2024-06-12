@@ -4,7 +4,7 @@ the_ROM_image:
 	[keysrc_encryption] bbram_red_key
 	[bootloader, encryption = aes, aeskeyfile=aes0.nky] ./recipe-sysroot/boot/fsbl.elf
 	[destination_cpu=pmu] ./recipe-sysroot/boot/pmufw.elf
-	[encryption = aes, aeskeyfile=aes1.nky, destination_device = pl] ../../../../deploy/images/xilinx-zynqmp/download-xilinx-zynqmp.bit
+	[encryption = aes, aeskeyfile=aes1.nky, destination_device = pl] ../../../../deploy/images/amd-zynqmp/download-amd-zynqmp.bit
 	[encryption = aes, aeskeyfile=aes2.nky, destination_cpu = a53-0, exception_level = el-3, trustzone] ./recipe-sysroot/boot/arm-trusted-firmware.elf
 	[encryption = aes, aeskeyfile=aes3.nky, destination_cpu = a53-0, load = 0x100000] ./recipe-sysroot/boot/devicetree/system-top.dtb
 	[encryption = aes, aeskeyfile=aes4.nky, destination_cpu = a53-0, exception_level = el-2] ./recipe-sysroot/boot/u-boot.elf
