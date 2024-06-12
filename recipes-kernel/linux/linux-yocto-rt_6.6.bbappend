@@ -1,5 +1,3 @@
-LINUX-YOCTO_INC_AMD-ZYNQMP = ""
-LINUX-YOCTO_INC_AMD-ZYNQMP:amd-zynqmp = "linux-yocto-amd-zynqmp.inc"
-require ${LINUX-YOCTO_INC_AMD-ZYNQMP}
+require linux-yocto-amd-zynqmp.inc
 
 KBRANCH:amd-zynqmp  = "v6.6/standard/preempt-rt/sdkv6.6/xlnx-soc"
