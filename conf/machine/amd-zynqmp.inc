@@ -17,8 +17,8 @@ PREFERRED_PROVIDER_virtual/boot-bin ??= "xilinx-bootbin"
 SOC_FAMILY ?= "zynqmp"
 
 PREFERRED_PROVIDER_virtual/kernel ??= "linux-yocto"
-PREFERRED_VERSION_linux-yocto ?= "6.1%"
-PREFERRED_VERSION_linux-yocto-rt ?= "6.1%"
+PREFERRED_VERSION_linux-yocto ?= "6.6%"
+PREFERRED_VERSION_linux-yocto-rt ?= "6.6%"
 
 MACHINE_EXTRA_RRECOMMENDS = " kernel-modules kernel-devicetree"
 IMAGE_FSTYPES += "tar.bz2 wic wic.bmap"
