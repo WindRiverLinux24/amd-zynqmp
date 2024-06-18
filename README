@@ -398,7 +398,7 @@ the vendor, the following link is their answer:
 7.7 PCIe
 --------
 
-Only some limited PCIe devices were supported based on the SDK2023.01 and the
+Only some limited PCIe devices were supported based on the SDK2024.01 and the
 following link:
 
   https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842417/Linux+ZynqMP+PS-PCIe+Root+Port+Driver
@@ -463,8 +463,8 @@ from linux side in running time. A simple example as below:
 ---------------------------------
 
 Download a xilinx prebuilt bitstream file with below link:
-https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2736816129/2023.2+Release
-Then, extract the .bit file from package 2023.2-zcu102-release.tar.xz and rename it into system.bit
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2950595219/2024.1+Release
+Then, extract the .bit file from package 2024.1-zcu102-release.tar.xz and rename it into system.bit
 
 8.2 Generate binary file
 --------------------------
@@ -472,7 +472,7 @@ Then, extract the .bit file from package 2023.2-zcu102-release.tar.xz and rename
 Because amd-zynqmp platform only supports binary format for updating FPGA, it is need
 to change the .bit file into binary format with below commands:
  - set environment variable
- # source xxx/Vivado/Vivado/2023.2/settings64.sh
+ # source xxx/Vivado/Vivado/2024.1/settings64.sh
 
  - generate the .bin from .bit file using Bootgen
  # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
@@ -685,7 +685,7 @@ Prerequisites:
   * RSA key pair related knowledges, like using openssl to make RSA key pair.
   * Please carefully read chapter 8, 11, 12 in [3], chapter 8 and 16 in [4],
     chapter 5 in [9] and all content of [5] in References section.
-  * Download and install Xilinx SDK 2023.2 or later version via link [7].
+  * Download and install Xilinx SDK 2024.1 or later version via link [7].
 
 After having downloaded and installed Xilinx SDK, then you can start to make
 RSA key pair and assemble your own zynqmp BOOT.BIN by bootgen command.

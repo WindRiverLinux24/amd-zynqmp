@@ -21,7 +21,7 @@ This BSP supports the following boards:
 2. Change History
 =================
 
-  - 2023/05 (LINUXPG-1571): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2023.01
+  - 2024/08 (LINUXPG-2291): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2024.01
 
 3. BSP Features
 ===============
@@ -64,10 +64,10 @@ the corresponding h/w features exist.
 	+ UART
 
   o Graphic
-       + ARM Mali-400 MP2(r8p0-01rel0)
-       + DisplayPort
-       + Xilinx DRM
-       + Xilinx FB
+	+ ARM Mali-400 MP2(r8p0-01rel0)
+	+ DisplayPort
+	+ Xilinx DRM
+	+ Xilinx FB
 
 3.2 Patch integrated and Unsupported Features
 ---------------------------------------------
@@ -98,4 +98,4 @@ in a different environment it may possibly have some issues.
 	Processor:              ZYMQMP (410fd034 revision 4, Chip ID: xczu9eg)
 	Board Revision:	        Rev 1.0/1.1
 	BootLoader:             U-Boot
-	BootLoader Version:     U-Boot 2023.01
+	BootLoader Version:     U-Boot 2024.01
