@@ -176,7 +176,7 @@ create a bootable WIC image by following the steps as below:
      $ . ./oe-init-build-env
      $ cat << _EOF >> conf/local.conf
 CUSTOMER_RECIPES:xilinx += 'bootgen'
-CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx
+CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx'
 CUSTOMER_RECIPES:xilinx += 'u-boot-tools-xlnx'
 PREFERRED_PROVIDER_u-boot-tools-native = "u-boot-tools-xlnx-native"
 CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx-scr'
@@ -193,6 +193,7 @@ CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
 PREFERRED_PROVIDER_virtual/boot-bin = "xilinx-bootbin"
 IMAGE_BOOT_FILES:append = " \${DEPLOY_DIR_IMAGE}/boot.bin;BOOT.BIN"
 IMAGE_INSTALL:append = " xilinx-bootbin"
+MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
 BB_NO_NETWORK = '0'
 HDF_MACHINE = "zcu102-zynqmp"
 YAML_DT_BOARD_FLAGS ?= "{BOARD zcu102-rev1.0}"
