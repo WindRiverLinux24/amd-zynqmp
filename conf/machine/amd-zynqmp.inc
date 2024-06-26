@@ -64,13 +64,6 @@ FIT_SIGN_ALG ?= "rsa2048"
 # Set FIT_HASH_ALG as the expected value in local.conf. The default one is sha256.
 FIT_HASH_ALG ?= "sha256"
 
-INSECURE_KEY_MSG = "\
-WARNING: The insecure sample keys are used for secure Boot.\
-Please ensure that you are aware of what your risk to use these keys in your own product."
-
-# Warn the user if sample key is used
-BANNER[amd-zynqmp_default] = "${INSECURE_KEY_MSG}"
-
 XSERVER:append = " xf86-video-armsoc"
 OSTREE_BOOTLOADER_INCLUDE ?= ""
 OSTREE_SD_UBOOT_WIC1 ?= ""
