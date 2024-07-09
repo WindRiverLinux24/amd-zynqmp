@@ -496,71 +496,69 @@ And mkfs a new filesystem on your hard disk partition.
 ============================
 
 On amd-zynqmp platform, customer is able to update their own FPGA design image
-from linux side in running time. A simple example as below:
+from linux side in running time. Here is an example of PL programming from linux
+using the Linux FPGA Manager framework. In this example, we will program a prebuilt
+bitstream file "download.bit" into FPGA.
 
-9.1 Prepare FPGA bitstream file
----------------------------------
+9.1 Generate Bitstream Binary file
+----------------------------------
 
-Download a xilinx prebuilt bitstream file with below link:
-https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2950595219/2024.1+Release
-Then, extract the .bit file from package 2024.1-zcu102-release.tar.xz and rename it into system.bit
-
-9.2 Generate binary file
---------------------------
-
-Because amd-zynqmp platform only supports binary format for updating FPGA, it is need
+Because amd-zynqmp platform only supports binary format for updating FPGA, it is needed
 to change the .bit file into binary format with below commands:
- - set environment variable
- # source xxx/Vivado/Vivado/2024.1/settings64.sh
 
- - generate the .bin from .bit file using Bootgen
- # bootgen -image Bitstream.bif -arch zynqmp -process_bitstream bin	(For 2017.4 and earlier releases)
- or
- # bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w	(For newer releases than 2017.4)
+	$ git clone https://github.com/Xilinx/soc-prebuilt-firmware.git
+	$ cd soc-prebuilt-firmware
+	$ git checkout xlnx_rel_v2024.1
+	$ cd zcu102-zynqmp
+	$ source <PATH_TO_Vivado>/2024.1/settings64.sh
+	$ bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w
 
- - Bitstream.bif file content as below:
- all:
- {
-	[destination_device = pl] system.bit	/* Bitstream file name */
- }
+The content of Bitstream.bif is listed as follow:
 
- - The output bin file is system.bit.bin
+	all:
+	{
+		[destination_device = pl] download.bit	/* Bitstream file name */
+	}
 
-9.3 Generate Device Tree Overlay (DTO)
+9.2 Generate Device Tree Overlay (DTO)
 ---------------------------------------
 
-As below is the file contents example:
+We create a pl.dtsi file and its contents is listed as follow:
 
-// pl.dtsi overlay dts file.
-/dts-v1/;
-/plugin/;
+	// pl.dtsi overlay dts file.
+	/dts-v1/;
+	/plugin/;
 
-/ {
-    fragment@0 {
-        target-path = "/fpga-full";
+	/ {
+		fragment@0 {
+			target = <&fpga_full>;
+			__overlay__ {
+				#address-cells = <2>;
+				#size-cells = <2>;
+				firmware-name = "system.bit.bin";
+			};
+		};
+	};
 
-        __overlay__ {
-            #address-cells = <2>;
-            #size-cells = <2>;
-
-            firmware-name = "system.bit.bin";
-        };
-    };
-};
-
-We can create Device Tree Overlay Blob (.dtbo) file from
+Then we generate Device Tree Overlay Blob (.dtbo) file from
 the pl.dtsi file as below:
 
-dtc -O dtb -o pl.dtbo -b 0 -@ pl.dtsi
+	$ dtc -O dtb -o pl.dtbo -b 0 -@ pl.dtsi
 
-9.4 Deploy required files
----------------------------
-Deploy system.bit.bin and pl.dtbo file in SD card or other storage medium.
+Deploy system.bit.bin and pl.dtbo files into rootfs.
 
-9.5 Update FPGA bitstream file
---------------------------------
-9.5.1 Update FPGA by using device tree overlay
+9.3 Update FPGA bitstream file
+------------------------------
+
+There are two ways to program the bitstream file:
+	- using Device Tree Overlay
+	- using sysfs interface
+
+9.3.1 Update FPGA by using Device Tree Overlay
+----------------------------------------------
+
 Boot up kernel and login, then run below commands in terminal.
+
 1) Set flags for Full Bitstream.
 	# echo 0 > /sys/class/fpga_manager/fpga0/flags
 
@@ -577,16 +575,19 @@ Boot up kernel and login, then run below commands in terminal.
 4) Steps to remove device nodes
 	# rmdir /sys/kernel/config/device-tree/overlays/system
 
-9.5.2 Update FPGA by using sysfs interface
-Boot up kernel and login, then run below commands in terminal.
-# echo 0 > /sys/class/fpga_manager/fpga0/flags
-# mkdir -p /lib/firmware
-# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
-# cd /lib/firmware
-# echo system.bit.bin > /sys/class/fpga_manager/fpga0/firmware
+9.3.2 Update FPGA by using sysfs interface
+------------------------------------------
 
-9.6 Note
----------
+Boot up kernel and login, then run below commands in terminal.
+
+	# echo 0 > /sys/class/fpga_manager/fpga0/flags
+	# mkdir -p /lib/firmware
+	# cp xxx/system.bit.bin /lib/firmware/system.bit.bin
+	# cd /lib/firmware
+	# echo system.bit.bin > /sys/class/fpga_manager/fpga0/firmware
+
+9.4 Note
+--------
 If customer wants to enable new peripherals that reside in the new FPGA bitstream from linux side,
 overlay solution is able to implement the requirement. Detail description, please refer to below link.
 https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841847/Solution+ZynqMP+PL+Programming#x-Programming+the+PL+through+Linux
