@@ -152,7 +152,7 @@ This BSP supports disk images for SD card.
 After building the project, user will get a WIC image under the directory
 tmp-glibc/deploy/images/<bsp name>/, such as:
 
-	<PATH_TO_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.rootfs.wic
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.rootfs.wic
 
 NOTE: The WIC image built in WRLinux don't contain the bootloader BOOT.BIN
 by default. Please refer to section 6 for the detailed description to create
@@ -196,7 +196,7 @@ Run the following steps to generate BOOT.BIN
 	$ cd soc-prebuilt-firmware
 	$ git checkout xlnx_rel_v2024.1
 	$ cd zcu102-zynqmp
-	$ source <PATH_TO_Vivado>/2024.1/settings64.sh
+	$ source <path_to_Vivado>/2024.1/settings64.sh
 	$ bootgen -arch zynqmp -image bootgen.bif -o ./BOOT.BIN -w
 
 And the BOOT.BIN can be installed into the WIC image:
@@ -235,7 +235,7 @@ CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
 CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
 PREFERRED_PROVIDER_virtual/boot-bin = "xilinx-bootbin"
-IMAGE_BOOT_FILES:append = " \${DEPLOY_DIR_IMAGE}/boot.bin;BOOT.BIN"
+IMAGE_BOOT_FILES:append = " boot.bin;BOOT.BIN"
 IMAGE_INSTALL:append = " xilinx-bootbin"
 MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
 BB_NO_NETWORK = '0'
@@ -247,11 +247,11 @@ _EOF
 
 After building project, BOOT.BIN can be found at:
 
-	<PATH_TO_your_project>/tmp-glibc/deploy/images/amd-zynqmp/boot.bin
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/boot.bin
 
 And it has been installed to the WIC image:
 
-	<PATH_TO_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.wic
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.wic
 
 
 NOTE: the BOOT.BIN generated with the prebuilt firmwares is different to
@@ -510,7 +510,7 @@ to change the .bit file into binary format with below commands:
 	$ cd soc-prebuilt-firmware
 	$ git checkout xlnx_rel_v2024.1
 	$ cd zcu102-zynqmp
-	$ source <PATH_TO_Vivado>/2024.1/settings64.sh
+	$ source <path_to_Vivado>/2024.1/settings64.sh
 	$ bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w
 
 The content of Bitstream.bif is listed as follow:
