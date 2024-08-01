@@ -212,8 +212,13 @@ _EOF
 6.2 Build BOOT.BIN in WRLinux
 -----------------------------
 Besides the above method which uses prebuilt firmwares to generate BOOT.BIN,
-WRLinux can build BOOT.BIN and create a bootable WIC image by following the
-steps as below:
+WRLinux can build BOOT.BIN and create a bootable WIC image by using the default
+xsa file or an extra xsa file.
+
+6.2.1 Build a default BOOT.BIN
+------------------------------
+This chapter describes how to generate a BOOT.BIN by using the default xsa
+file which is provided by AMD.
 
 	$ cd path_of_project
 	$ . ./environment-setup-x86_64-wrlinuxsdk-linux
@@ -253,11 +258,67 @@ And it has been installed to the WIC image:
 
 	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.wic
 
-
 NOTE: the BOOT.BIN generated with the prebuilt firmwares is different to
 the one built in WRLinux because WRLinux keeps updating the versions of
 firmwares.
 
+6.2.2 Build BOOT.BIN with extra xsa
+-----------------------------------
+In some cases, customers export a xsa file from their Vivado project.
+The BOOT.BIN can be generated with this xsa file in WRLinux, rather
+than using Vitis. Below are the steps for generating this type of BOOT.BIN:
+
+	$ cd path_of_project
+	$ . ./environment-setup-x86_64-wrlinuxsdk-linux
+	$ . ./oe-init-build-env
+	$ cat << _EOF >> conf/local.conf
+CUSTOMER_RECIPES:xilinx += 'bootgen'
+CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx'
+CUSTOMER_RECIPES:xilinx += 'u-boot-tools-xlnx'
+PREFERRED_PROVIDER_u-boot-tools-native = "u-boot-tools-xlnx-native"
+CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx-scr'
+CUSTOMER_RECIPES:xilinx += 'xilinx-bootbin'
+CUSTOMER_RECIPES:xilinx += 'fsbl'
+CUSTOMER_RECIPES:xilinx += 'arm-trusted-firmware'
+CUSTOMER_RECIPES:xilinx += 'pmufw'
+CUSTOMER_RECIPES:xilinx += 'device-tree'
+CUSTOMER_RECIPES:virtualization-layer += 'python3-dtc'
+CUSTOMER_RECIPES:xilinx-tools += 'bitstream-extraction'
+CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
+CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
+CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
+PREFERRED_PROVIDER_virtual/boot-bin = "xilinx-bootbin"
+IMAGE_BOOT_FILES:append = " boot.bin;BOOT.BIN"
+IMAGE_INSTALL:append = " xilinx-bootbin"
+MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
+BB_NO_NETWORK = '0'
+HDF_MACHINE = "zcu102-zynqmp"
+YAML_DT_BOARD_FLAGS ?= "{BOARD zcu102-rev1.0}"
+NON_MULTILIB_RECIPES:append = " fsbl-firmware pmu-firmware"
+HDF_BASE = "file://"
+HDF_PATH = "<path_to_xsa>/system.xsa"
+IMAGE_BOOT_FILES:append = " system.dtb"
+_EOF
+	$ bitbake wrlinux-image-std
+
+After building project, BOOT.BIN can be found at:
+
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/boot.bin
+
+The dtb file can be found at:
+
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/system.dtb
+
+BOOT.BIN and system.dtb have been installed to the WIC image:
+
+	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.wic
+
+NOTE:
+1. The xsa file MUST include the bitstream file when exported in Vivado. This
+   means that when using "Files->Export->Export Hardware" in Vivado to export
+   a xsa file, the option "Include bitstream" MUST be selected.
+2. When booting Linux in u-boot, the dtb file should be set to system.dtb because
+   this dtb file contains the device nodes for PL devices in bitstream file.
 
 7. kexec and kdump
 ===================
