@@ -541,8 +541,8 @@ PREFERRED_PROVIDER_virtual/libgl:amd-zynqmp = "mesa-gl"
 PREFERRED_PROVIDER_virtual/libgles1:amd-zynqmp = "libmali-xlnx"
 PREFERRED_PROVIDER_virtual/libgles2:amd-zynqmp = "libmali-xlnx"
 PREFERRED_PROVIDER_virtual/egl:amd-zynqmp = "libmali-xlnx"
-CUSTOMER_RECIPES:xilinx += "libmali-xlnx"
-CUSTOMER_RECIPES:xilinx += 'kernel-module-mali'
+CUSTOMER_RECIPES:xilinx-mali400 += "libmali-xlnx"
+CUSTOMER_RECIPES:xilinx-mali400 += "kernel-module-mali"
 LICENSE_FLAGS_ACCEPTED += "xilinx"
 MACHINE_FEATURES:amd-zynqmp += " mali400"
 _EOF
