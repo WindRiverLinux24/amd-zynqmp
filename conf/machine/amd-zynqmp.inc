@@ -30,7 +30,7 @@ do_image_wic[depends] += "mtools-native:do_populate_sysroot dosfstools-native:do
 IMAGE_BOOT_FILES ?= "${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', 'fitImage', 'Image zynqmp-zcu102-rev1.0.dtb', d)}"
 
 # multilib support
-MULTILIBS ?= "multilib:lib32"
+MULTILIBS ?= "${@bb.utils.contains('MACHINE_FEATURES', 'mali400', '', 'multilib:lib32', d)}"
 DEFAULTTUNE:virtclass-multilib-lib32 ?= "armv7athf-neon"
 
 # secure boot related configurations
