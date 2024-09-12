@@ -84,4 +84,8 @@ MACHINEOVERRIDES:prepend:amd-zynqmp = "mali400:zynqmp:zynqmp-eg:"
 
 OSTREE_BOOTSCR_PRECMD ?= "\
 setenv no_menu yes; \
+setenv initrd_addr 0x40000000; \
+setenv fdt_addr 0xe0000; \
+setenv console ttyPS0; \
+setenv baudrate 115200n8; \
 "
