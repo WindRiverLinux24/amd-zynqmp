@@ -20,7 +20,7 @@ information on submitting changes.
 
 
 Building the zynqmp layer
------------------------------
+-------------------------
 This layer and wrlinux layer should be added to bblayers.conf.
 
 
@@ -194,9 +194,9 @@ Run the following steps to generate BOOT.BIN
 
 	$ git clone https://github.com/Xilinx/soc-prebuilt-firmware.git
 	$ cd soc-prebuilt-firmware
-	$ git checkout xlnx_rel_v2024.1
+	$ git checkout xlnx_rel_v2024.2
 	$ cd zcu102-zynqmp
-	$ source <path_to_Vivado>/2024.1/settings64.sh
+	$ source <path_to_Vivado>/2024.2/settings64.sh
 	$ bootgen -arch zynqmp -image bootgen.bif -o ./BOOT.BIN -w
 
 And the BOOT.BIN can be installed into the WIC image:
@@ -234,20 +234,15 @@ CUSTOMER_RECIPES:xilinx += 'fsbl'
 CUSTOMER_RECIPES:xilinx += 'arm-trusted-firmware'
 CUSTOMER_RECIPES:xilinx += 'pmufw'
 CUSTOMER_RECIPES:xilinx += 'device-tree'
-CUSTOMER_RECIPES:virtualization-layer += 'python3-dtc'
+CUSTOMER_RECIPES:xilinx += 'trusted-firmware-a'
+CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx-uenv'
 CUSTOMER_RECIPES:xilinx-tools += 'bitstream-extraction'
 CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-tools += 'xsct'
 CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
 CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
-PREFERRED_PROVIDER_virtual/boot-bin = "xilinx-bootbin"
-IMAGE_BOOT_FILES:append = " boot.bin;BOOT.BIN"
-IMAGE_INSTALL:append = " xilinx-bootbin"
-MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
+WRL_ZYNQMP_BOOTBIN_TARGET = 'zcu102'
 BB_NO_NETWORK = '0'
-HDF_MACHINE = "zcu102-zynqmp"
-YAML_DT_BOARD_FLAGS ?= "{BOARD zcu102-rev1.0}"
-NON_MULTILIB_RECIPES:append = " fsbl-firmware pmu-firmware"
 _EOF
 	$ bitbake wrlinux-image-std
 
@@ -283,23 +278,16 @@ CUSTOMER_RECIPES:xilinx += 'fsbl'
 CUSTOMER_RECIPES:xilinx += 'arm-trusted-firmware'
 CUSTOMER_RECIPES:xilinx += 'pmufw'
 CUSTOMER_RECIPES:xilinx += 'device-tree'
-CUSTOMER_RECIPES:virtualization-layer += 'python3-dtc'
+CUSTOMER_RECIPES:xilinx += 'trusted-firmware-a'
+CUSTOMER_RECIPES:xilinx += 'u-boot-xlnx-uenv'
 CUSTOMER_RECIPES:xilinx-tools += 'bitstream-extraction'
 CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-tools += 'xsct'
 CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
 CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
-PREFERRED_PROVIDER_virtual/boot-bin = "xilinx-bootbin"
-IMAGE_BOOT_FILES:append = " boot.bin;BOOT.BIN"
-IMAGE_INSTALL:append = " xilinx-bootbin"
-MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
+WRL_ZYNQMP_BOOTBIN_TARGET = 'zcu102'
 BB_NO_NETWORK = '0'
-HDF_MACHINE = "zcu102-zynqmp"
-YAML_DT_BOARD_FLAGS ?= "{BOARD zcu102-rev1.0}"
-NON_MULTILIB_RECIPES:append = " fsbl-firmware pmu-firmware"
-HDF_BASE = "file://"
-HDF_PATH = "<path_to_xsa>/system.xsa"
-IMAGE_BOOT_FILES:append = " system.dtb"
+HDF_NAME = "<path_to_xsa>/<xsa_file>.xsa"
 _EOF
 	$ bitbake wrlinux-image-std
 
@@ -321,9 +309,12 @@ NOTE:
    a xsa file, the option "Include bitstream" MUST be selected.
 2. When booting Linux in u-boot, the dtb file should be set to system.dtb because
    this dtb file contains the device nodes for PL devices in bitstream file.
+3. The system.dtb is generated with pl.dtsi and zynqmp.dtsi which comes from
+	https://github.com/Xilinx/device-tree-xlnx.git
+   This dtsi file is different to the one in wrlinux kernel source.
 
 7. kexec and kdump
-===================
+==================
 
 You need to add feature/kexec support as follow:
 	./wrlinux-x/setup.sh --machines amd-zynqmp --templates feature/kexec,feature/kdump
@@ -506,7 +497,7 @@ the vendor, the following link is their answer:
 8.7 PCIe
 --------
 
-Only some limited PCIe devices were supported based on the SDK2024.01 and the
+Only some limited PCIe devices were supported based on the SDK v2024.02 and the
 following link:
 
   https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842417/Linux+ZynqMP+PS-PCIe+Root+Port+Driver
@@ -549,7 +540,7 @@ _EOF
      $ bitbake wrlinux-image-std-sato
 
 8.9 SATA
----------
+--------
 
 When your SATA hard disk data is corrupted, the system might report a hard link
 reset, then try the following command:
@@ -577,9 +568,9 @@ to change the .bit file into binary format with below commands:
 
 	$ git clone https://github.com/Xilinx/soc-prebuilt-firmware.git
 	$ cd soc-prebuilt-firmware
-	$ git checkout xlnx_rel_v2024.1
+	$ git checkout xlnx_rel_v2024.2
 	$ cd zcu102-zynqmp
-	$ source <path_to_Vivado>/2024.1/settings64.sh
+	$ source <path_to_Vivado>/2024.2/settings64.sh
 	$ bootgen -image Bitstream.bif -arch zynqmp -o ./system.bit.bin -w
 
 The content of Bitstream.bif is listed as follow:
@@ -590,7 +581,7 @@ The content of Bitstream.bif is listed as follow:
 	}
 
 9.2 Generate Device Tree Overlay (DTO)
----------------------------------------
+--------------------------------------
 
 We create a pl.dtsi file and its contents is listed as follow:
 
@@ -662,22 +653,19 @@ overlay solution is able to implement the requirement. Detail description, pleas
 https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841847/Solution+ZynqMP+PL+Programming#x-Programming+the+PL+through+Linux
 
 
-10 Generate dtb based on HDF/XSA
-================================
+10 Generate dtb based on XSA
+============================
 Firstly, set BB_NO_NETWORK as '0' in <path-of-project>/build/conf/local.conf file.
-Then following the steps as below to generate the dtb files based on the HDF/XSA files:
+Then following the steps as below to generate the dtb files based on the XSA files:
 
      $ cd path-of-project
      $ . ./environment-setup-x86_64-wrlinuxsdk-linux
      $ . ./oe-init-build-env
      $ cat << _EOF >> conf/local.conf
 CUSTOMER_RECIPES:xilinx += 'device-tree'
-CUSTOMER_RECIPES:xilinx += 'python3-dtc'
 CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-tools += 'xsct'
-HDF_BASE = "file://"
-HDF_PATH = "/< path-to-hdf >/system.xsa"
-HDF_MACHINE = "zcu102-zynqmp"
+HDF_NAME = "<path_to_xsa>/<xsa_file>.xsa"
 _EOF
      $ bitbake device-tree
 
@@ -767,7 +755,7 @@ fitImage with RSA2048/RSA4096 private key)
 
 
 11.4 CSU Introduction
-===================
+=====================
 Hardware CSU processor embedded in ZynqMP SoC to handle security stuffs
 
 ZynqMP holds a triple redundant microblaze processor CSU to handle some security
@@ -795,7 +783,7 @@ Prerequisites:
   * RSA key pair related knowledges, like using openssl to make RSA key pair.
   * Please carefully read chapter 8, 11, 12 in [3], chapter 8 and 16 in [4],
     chapter 5 in [9] and all content of [5] in References section.
-  * Download and install Xilinx SDK 2024.1 or later version via link [7].
+  * Download and install Xilinx SDK v2024.2 or later version via link [7].
 
 After having downloaded and installed Xilinx SDK, then you can start to make
 RSA key pair and assemble your own zynqmp BOOT.BIN by bootgen command.
@@ -938,10 +926,10 @@ Note:
 
 
 11.8. Enable secure boot for BSP amd-zynqmp
-----------------------------------------------
+-------------------------------------------
 
 11.8.1 Build amd-zynqmp BSP project with secure-boot template
-----------------------------------------------------------------
+-------------------------------------------------------------
 Detail steps as below:
 	$ mkdir <path_to_project>
 	$ cd <path_to_project>

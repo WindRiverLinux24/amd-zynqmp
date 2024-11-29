@@ -22,6 +22,7 @@ This BSP supports the following boards:
 =================
 
   - 2024/08 (LINUXPG-2291): Add BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2024.01
+  - 2025/01 (LINUXEXEC-33567): Update BSP support for ZYNQMP ZCU102 board based on xilinx-sdk-2024.02
 
 3. BSP Features
 ===============
