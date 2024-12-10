@@ -6,4 +6,4 @@ SECURE_BOOT_PATCHES:amd-zynqmp = " \
     file://zcu102-devicetree.cfg \
 "
 
-SRC_URI:append:amd-zynqmp = " ${@bb.utils.contains('UBOOT_SIGN_ENABLE', '1', '${SECURE_BOOT_PATCHES}', '', d)}"
+SRC_URI:append:amd-zynqmp = " ${@bb.utils.contains('MACHINE_FEATURES', 'secure-boot', '${SECURE_BOOT_PATCHES}', '', d)}"
