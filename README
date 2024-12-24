@@ -248,6 +248,7 @@ CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-tools += 'xsct'
 CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
 CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
+MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
 WRL_ZYNQMP_BOOTBIN_TARGET = 'zcu102'
 BB_NO_NETWORK = '0'
 _EOF
@@ -261,9 +262,11 @@ And it has been installed to the WIC image:
 
 	<path_to_your_project>/tmp-glibc/deploy/images/amd-zynqmp/wrlinux-image-<rootfs_type>-amd-zynqmp.wic
 
-NOTE: the BOOT.BIN generated with the prebuilt firmwares is different to
+NOTE:
+1. the BOOT.BIN generated with the prebuilt firmwares is different to
 the one built in WRLinux because WRLinux keeps updating the versions of
 firmwares.
+2. multilib is NOT supported for BOOT.BIN.
 
 6.2.2 Build BOOT.BIN with extra xsa
 -----------------------------------
@@ -292,6 +295,7 @@ CUSTOMER_RECIPES:xilinx-tools += 'external-hdf'
 CUSTOMER_RECIPES:xilinx-tools += 'xsct'
 CUSTOMER_RECIPES:xilinx-standalone += 'pmu-firmware'
 CUSTOMER_RECIPES:xilinx-standalone += 'fsbl-firmware'
+MACHINE_FEATURES:amd-zynqmp += " xilinx-bootbin"
 WRL_ZYNQMP_BOOTBIN_TARGET = 'zcu102'
 BB_NO_NETWORK = '0'
 HDF_NAME = "<path_to_xsa>/<xsa_file>.xsa"
@@ -545,6 +549,8 @@ LICENSE_FLAGS_ACCEPTED += "xilinx"
 MACHINE_FEATURES:amd-zynqmp += " mali400"
 _EOF
      $ bitbake wrlinux-image-std-sato
+
+NOTE: multilib is NOT supported for mali400 feature.
 
 8.9 SATA
 --------
