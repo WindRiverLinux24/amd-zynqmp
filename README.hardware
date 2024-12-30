@@ -70,8 +70,8 @@ the corresponding h/w features exist.
 	+ Xilinx DRM
 	+ Xilinx FB
 
-3.2 Patch integrated and Unsupported Features
----------------------------------------------
+3.2 Unsupported Features
+------------------------
 
 The following features are not supported and not validated:
 
@@ -80,12 +80,6 @@ The following features are not supported and not validated:
   x 2x2 SFP/SFP+ ports
   x SMMU
 
-Most of these features are not validated since they need a special TRD firmware
-bootloader with the related PL bitstream, generally speaking, you can download
-the specific Xilinx xapp from the vendor website with your Xilinx account,
-like xapp1305 for SFP interface.
-
-Please refer to BSP notes for more information.
 
 4. BSP Notes
 ============
