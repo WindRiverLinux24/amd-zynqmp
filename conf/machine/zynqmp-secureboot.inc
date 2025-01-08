@@ -6,6 +6,8 @@ IMAGE_BOOT_FILES:append = " fitImage "
 UBOOT_SIGN_KEYDIR = "${@bb.utils.contains("FIT_SIGN_ALG", "rsa4096", "${LAYER_PATH_wr-amd-zynqmp}/zynqmp_keys/fitImage-rsa4096-keys", "${LAYER_PATH_wr-amd-zynqmp}/zynqmp_keys/fitImage-rsa2048-keys", d)}"
 UBOOT_MKIMAGE_DTCOPTS = "-I dts -O dtb -p 2000"
 UBOOT_SIGN_KEYNAME = "dev"
+# UBOOT_MACHINE is needed by linux-yocto
+UBOOT_MACHINE ?= "xilinx_zynqmp_virt_defconfig"
 # Key used to sign kernel and dtb parts in fit image
 UBOOT_SIGN_IMG_KEYNAME = "dev_individual"
 FIT_SIGN_INDIVIDUAL  = "1"
